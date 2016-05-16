@@ -10,7 +10,11 @@ if (Meteor.isClient) {
     },
     selectedName: function () {
       var player = Players.findOne(Session.get("selectedPlayer"));
-      return player && player.name;
+      if (player.name === '') {
+        return ' ';
+      } else {
+        return player.name;
+      }
     }
   });
 
@@ -22,10 +26,15 @@ if (Meteor.isClient) {
       Players.update(Session.get("selectedPlayer"), {$inc: {score: -5}});
     },
     'click .delete': function () {
+      console.log('hello');
       Players.remove(Session.get("selectedPlayer"));
     },
     'click #addPlayer': function(event, template) {
       var input = template.find("#inputPlayerName").value;
+      if ( $.trim( $('#inputPlayerName').val() ) == '' ) {
+        alert('Input is blank');
+        return;
+      }
       Players.insert({
           name: input,
           score: 0
@@ -44,7 +53,6 @@ if (Meteor.isClient) {
   Template.player.events({
     'click': function () {
       Session.set("selectedPlayer", this._id);
-      console.log("Player's name is " + Session.get("selectedPlayer"));
     }
   });
 }
